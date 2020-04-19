@@ -1,12 +1,12 @@
 # spring5-kubernetes-aws
 # TO-RUN
 #Build image locally
-docker build -t webflux-kuber .
-docker build -t prabhupsr/prrepo:webflux-kuber .
-sudo docker push prabhupsr/prrepo:webflux-kuber
-docker network create prnet
+docker build -t webflux-kuber . /n
+docker build -t prabhupsr/prrepo:webflux-kuber . /n
+sudo docker push prabhupsr/prrepo:webflux-kuber /n
+docker network create prnet /n
 
-#Docker image uploaded to Docker HUB
+#Docker image uploaded to Docker HUB /n
 docker run   --name=webflux-kuber   --rm   --network=prnet   -p 8080:8992   -e MONGO_URL=mongodb://mongo:27017/dev   prabhupsr/prrepo:webflux-kuber
 docker run --name=mongo --rm --network=prnet mongo
 
