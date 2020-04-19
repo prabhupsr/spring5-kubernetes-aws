@@ -7,17 +7,18 @@ sudo docker push prabhupsr/prrepo:webflux-kuber /n
 docker network create prnet /n
 
 #Docker image uploaded to Docker HUB /n
-docker run   --name=webflux-kuber   --rm   --network=prnet   -p 8080:8992   -e MONGO_URL=mongodb://mongo:27017/dev   prabhupsr/prrepo:webflux-kuber
-docker run --name=mongo --rm --network=prnet mongo
+docker run   --name=webflux-kuber   --rm   --network=prnet   -p 8080:8992   -e MONGO_URL=mongodb://mongo:27017/dev   prabhupsr/prrepo:webflux-kuber  \n
+docker run --name=mongo --rm --network=prnet mongo \n
 
 kubernetes in AWS:
 
-brew install aws-iam-authenticator 
-aws eks update-kubeconfig --name prcluster
-kubectl apply -f mytry/webflux-kuber/kube/aws-auth-cm.yaml
-kubectl create -f mytry/webflux-kuber/kube/mongo.yaml
-create -f mytry/webflux-kuber/kube/webflux-kuber.yaml
-get services -o wide
+brew install aws-iam-authenticator \n
+aws eks update-kubeconfig --name prcluster \n
+kubectl apply -f mytry/webflux-kuber/kube/aws-auth-cm.yaml \n
+kubectl create -f mytry/webflux-kuber/kube/mongo.yaml \n
+create -f mytry/webflux-kuber/kube/webflux-kuber.yaml \n
+get services -o wide \n
+
 
 References:
 https://learnk8s.io/spring-boot-kubernetes-guide
