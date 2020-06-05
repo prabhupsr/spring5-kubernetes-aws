@@ -19,7 +19,6 @@ kubectl create -f mytry/webflux-kuber/kube/mongo.yaml \n
 create -f mytry/webflux-kuber/kube/webflux-kuber.yaml \n
 get services -o wide \n
 
-
 References:
 https://learnk8s.io/spring-boot-kubernetes-guide
 https://www.youtube.com/watch?v=6H5sXQoJiso&t=1758s

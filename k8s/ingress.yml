@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /merchant
+            backend:
+              serviceName: webflux-kuber
+              servicePort: 80
+          - path: /merchant/(.+)
+            backend:
+              serviceName: webflux-kuber
+              servicePort: 80
+          - path: /users
+            backend:
+              serviceName: webflux-kuber
+              servicePort: 80

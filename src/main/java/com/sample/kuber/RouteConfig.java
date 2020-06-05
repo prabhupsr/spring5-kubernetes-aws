@@ -18,11 +18,10 @@ import java.util.stream.Stream;
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.nest;
 
-
 @Configuration
 public class RouteConfig {
 
-    private MerchantRepo merchantRepo;
+    private final MerchantRepo merchantRepo;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public RouteConfig(MerchantRepo merchantRepo) {
@@ -32,10 +31,23 @@ public class RouteConfig {
     @Bean
     RouterFunction<ServerResponse> serverResponseRouterFunction() {
 
-        return nest(path("/merchant"), RouterFunctions
-                .route(GET("/create/sample/{num}").and(accept(MediaType.APPLICATION_JSON)), this::process)
-                .andRoute(POST("/create").and(accept(MediaType.APPLICATION_JSON)), this::createMerchant)
-                .andRoute(GET("/{id}").and(accept(MediaType.APPLICATION_JSON)), this::fetchMerchant));
+        return nest(path(""), RouterFunctions
+                .route(
+                        GET("/create/sample/{num}")
+                                .and(accept(MediaType.APPLICATION_JSON)),
+                        this::process)
+                .andRoute(
+                        POST("/create")
+                                .and(accept(MediaType.APPLICATION_JSON)),
+                        this::createMerchant)
+                .andRoute(
+                        GET("/{id}")
+                                .and(accept(MediaType.APPLICATION_JSON)),
+                        this::fetchMerchant))
+                .andRoute(
+                        GET("/")
+                                .and(accept(MediaType.APPLICATION_JSON)),
+                        request -> createSuccessResponse("welcome", String.class));
     }
 
     private Mono<ServerResponse> fetchMerchant(ServerRequest serverRequest) {
@@ -43,14 +55,14 @@ public class RouteConfig {
         return merchantRepo.findById(Integer.valueOf(serverRequest.pathVariable("id")))
                 .switchIfEmpty(Mono.error(new RuntimeException("record not found")))
                 .flatMap(merchant -> createSuccessResponse(merchant, Merchant.class))
-                .onErrorResume(throwable -> createFailureResponse(throwable));
+                .onErrorResume(this::createFailureResponse);
     }
 
     private Mono<ServerResponse> createMerchant(ServerRequest serverRequest) {
 
         return serverRequest.bodyToMono(Merchant.class).flatMap(merchantRepo::insert)
                 .flatMap(merchant -> createSuccessResponse(merchant, Merchant.class))
-                .onErrorResume(throwable -> createFailureResponse(throwable));
+                .onErrorResume(this::createFailureResponse);
     }
 
     private Mono<ServerResponse> createFailureResponse(Throwable throwable) {
@@ -61,15 +73,16 @@ public class RouteConfig {
     }
 
     private <T> Mono<ServerResponse> createSuccessResponse(T response, Class<T> aClass) {
+        System.out.println("new ndsf");
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_STREAM_JSON)
                 .body(Mono.just(response), aClass);
     }
 
-    private Mono<ServerResponse>    process(ServerRequest serverRequest) {
+    private Mono<ServerResponse> process(ServerRequest serverRequest) {
 
         Stream<Merchant> integerStream =
-                IntStream.range(0, Integer.valueOf(serverRequest.pathVariable("id")))
+                IntStream.range(0, Integer.parseInt(serverRequest.pathVariable("num")))
                         .boxed()
                         .map(integer -> new Merchant(integer, "name" + integer));
 
@@ -77,6 +90,5 @@ public class RouteConfig {
                 .contentType(MediaType.APPLICATION_STREAM_JSON)
                 .body(Flux.fromStream(integerStream).delayElements(Duration.ofSeconds(1)), Merchant.class);
     }
-
 
 }
