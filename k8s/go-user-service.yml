@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gok8s
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gok8s
+  template:
+    metadata:
+      labels:
+        app: gok8s
+    spec:
+      containers:
+        - name: app
+          image: prabhupsr/prrepo:gokitk8s
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGO_URL
+              value: mongodb://mongo:27017/dev
+          imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gok8s
+spec:
+  selector:
+    app: gok8s
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer

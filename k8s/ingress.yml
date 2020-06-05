@@ -16,7 +16,7 @@ spec:
             backend:
               serviceName: webflux-kuber
               servicePort: 80
-          - path: /users
+          - path: /user/(.+)
             backend:
-              serviceName: webflux-kuber
+              serviceName: gok8s
               servicePort: 80
